@@ -4,8 +4,8 @@ export class HttpInterceptorService implements HttpInterceptor {
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-if (request.body && !(request.body instanceof FormData)) {
-      
+    if (request.body && !(request.body instanceof FormData)) {
+
       const isString = (value: any): boolean => typeof value === 'string' || value instanceof String;
 
       const trimObject = (reqBody: any): any => {
@@ -18,27 +18,25 @@ if (request.body && !(request.body instanceof FormData)) {
 
           const body = [];
 
-          reqBody.forEach(d =>body.push(trimObject(d)));
+          reqBody.forEach(d => body.push(trimObject(d)));
 
           return body;
 
         } else if (reqBody instanceof Object) {
-          
-          const  body = {};
+
+          const body = {};
 
           Object.keys(reqBody).forEach(key => {
             body[key] = trimObject(reqBody[key]);
           });
 
-          return body
+          return body;
         }
 
         return reqBody;
       };
 
-      const body = trimObject(request.body);
-
-      request = request.clone({ body });
+      request = request.clone({ body: trimObject(request.body) });
     }
     
     return next.handle(request).pipe(
